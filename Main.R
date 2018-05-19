@@ -1,3 +1,5 @@
+##Main bitgram Model
+
 library(stringi)
 docs<-"IBM software company founded devoted to consultancy processing first happen"
 words<-unlist(unique(stri_extract_all_words(docs)))
