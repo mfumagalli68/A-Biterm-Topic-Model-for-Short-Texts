@@ -39,7 +39,7 @@ gibbs_sampler<-function(biterms,alpha,beta,num_topics,num_words,n_iter)
     
   }
     end<-Sys.time()-begin
-    if(s%%50==0)
+    if(s%%10==0)
       {print (paste("iter.",s,end))}
   }
 
@@ -91,4 +91,20 @@ as_model<-function(fit_model)
   
 }
 
-print()
+extract_relevant_word_per_topic<-function(topic_terms)
+{
+  #browser()
+  lista<-list()
+  j<-1
+  
+  for ( i in 1:ncol(topic_terms))
+  {
+  v<-topic_terms[,which(topic_terms[,i]>0.1),drop=FALSE]
+  if(!all(v==0))
+  {
+    lista[[colnames(topic_terms[,i,drop=FALSE])]]<-v
+  }
+  }
+  ret<-do.call(cbind,lista)
+  return (ret)
+}
