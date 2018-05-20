@@ -26,7 +26,7 @@ for (d in docs)
     bigram<-combn(d,2,simplify = F)
   if(length(bigram)>1)
   {
-  fit[[k]]<-gibbs_sampler(bigram,50/3,0.01,5,length(unique(d)),1000)
+  fit[[k]]<-gibbs_sampler(bigram,50/3,0.01,4,length(unique(d)),1000)
   k<-k+1
   }
   }
@@ -47,4 +47,11 @@ data_to_plot<-data_to_plot%>%dplyr::rename(terms=V1,prob=V2)%>%mutate(prob=as.nu
 
 library(ggplot2)
 library(wordcloud2)
-wordcloud(data_to_plot$terms,data_to_plot$prob,color=brewer.pal(8, "Dark2")[data_to_plot$topic],ordered.colors = T)
+data_to_plot<-data_to_plot%>%group_by(topic)%>%arrange(topic)
+
+data_to_plot %>%
+  mutate(terms = reorder(terms, prob)) %>%
+  ggplot(aes(terms, prob, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip()
