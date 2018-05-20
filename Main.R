@@ -26,16 +26,25 @@ for (d in docs)
     bigram<-combn(d,2,simplify = F)
   if(length(bigram)>1)
   {
-  fit[[k]]<-gibbs_sampler(bigram,50/3,0.01,3,length(unique(d)),500)
+  fit[[k]]<-gibbs_sampler(bigram,50/3,0.01,5,length(unique(d)),1000)
   k<-k+1
   }
   }
 }
+
+#####unique documents
+#docs<-unlist(unique(stri_extract_all_words(docs)))
+#bigram<-combn(docs,2,simplify = F)
+#fit<-gibbs_sampler(bigram,50/3,0.01,3,length(unique(unlist(docs))),500)
+#model_fit<-as_model(fit)
+#word_topic<-extract_relevant_word_per_topic(model_fit$topic_terms,model_fit$topic_proportions)
+
 model_fit<-lapply(fit,as_model)
 relevant_word<-lapply(model_fit, function(x,y) {extract_relevant_word_per_topic(x$topic_terms,x$topic_proportions)})
-lapply(relevant_word,count_topic)
+data_to_plot<-as.data.frame(do.call(rbind,relevant_word))
+data_to_plot<-data_to_plot%>%dplyr::rename(terms=V1,prob=V2)%>%mutate(prob=as.numeric(prob))
 
-count_topic<-function(x)
-{
-  
-}
+
+library(ggplot2)
+library(wordcloud2)
+wordcloud(data_to_plot$terms,data_to_plot$prob,color=brewer.pal(8, "Dark2")[data_to_plot$topic],ordered.colors = T)

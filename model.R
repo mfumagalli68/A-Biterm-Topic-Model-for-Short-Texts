@@ -93,15 +93,16 @@ as_model<-function(fit_model)
 
 extract_relevant_word_per_topic<-function(topic_terms,topic_prop)
 {
-  #browser()
+ # browser()
   v<-list()
   z<-which.max(topic_prop)
-  top<-ifelse(z==1,"first_topic",ifelse(z==2,"second_topic","third_topic"))
+  top<-ifelse(z==1,"first_topic",ifelse(z==2,"second_topic",ifelse(z==3,"third_topic",
+                                                                   ifelse(z==4,"fourth_topic","fifth_topic"))))
   term<-topic_terms[z,]
-  term<-term[order(term)][1:3]
-  v[[top]]<-names(term)
+  term<-term[order(term)][1]
+  data<-c(names(term),as.numeric(term),topic=top)
  
   
-  return (v)
+  return (data)
   
 }
